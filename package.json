@@ -45,6 +45,8 @@
     "sequelize": "^6.37.3",
     "simple-git": "^3.25.0",
     "sqlite3": "^5.1.7",
-    "util": "^0.12.4"
+    "util": "^0.12.4",
+    "youtubei.js": "^10.2.0",
+    "yt-search": "^2.11.1"
   }
 }
