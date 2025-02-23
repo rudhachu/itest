@@ -14,9 +14,9 @@
   "author": "princerudh",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@whiskeysockets/baileys": "^latest-version",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@whiskeysockets/baileys": "github:princerudh/Baileys",
     "awesome-phonenumber": "^2.64.0",
     "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.10",
