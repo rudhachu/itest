@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: rudhra-bot
+    repo: https://github.com/princerudh/rudhra-bot.git
+    branch: main
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: SESSION_ID
+        sync: false
+        required: true
+      - key: DATABASE_URL
+        sync: false
+        required: true
+      - key: PREFIX
+        sync: false
+      - key: SUDO
+        value: 919895809960
+      - key: MODE
+        value: "private"
+      - key: PORT
+        value: "3000"
