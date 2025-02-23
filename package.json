@@ -29,6 +29,7 @@
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
     "google-tts-api": "^2.0.2",
+    "google-translate-api-x": "^10.7.2",
     "heroku-client": "^3.1.0",
     "jimp": "^0.16.13",
     "moment-timezone": "^0.5.34",
