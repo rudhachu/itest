@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2 start . --attach --name rudhra",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "stop": "pm2 stop rudhra"
   },
   "repository": {
     "type": "git",
