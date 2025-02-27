@@ -1,7 +1,7 @@
 const client = require('./lib/client')
 const start = async () => {
 	try {
-		await client.startRudhra()
+		await client.initialize()
 	} catch (error) {
 		console.error(error)
 	}
