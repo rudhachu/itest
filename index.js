@@ -1,13 +1,10 @@
-const WhatsApp = require('./lib/client')
-
+const client = require('./lib/client')
 const start = async () => {
- try {
-    const bot = new WhatsApp('connect')
-    await bot.initialize();
-    await bot.connect();
-    await bot.web();
-  } catch (error) {
-    console.error(error)
-  }
+	try {
+		await client.startRudhra()
+	} catch (error) {
+		console.error(error)
+	}
 }
+
 start()
