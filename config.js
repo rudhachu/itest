@@ -1,48 +1,72 @@
-const toBool = (x) => x == 'true'
-const { existsSync } = require('fs')
+const toBool = (x) => x == 'true';
+const { existsSync } = require('fs');
 const { Sequelize } = require('sequelize');
-if (existsSync('config.env')) require('dotenv').config({ path: './config.env' })
-process.env.NODE_OPTIONS = '--max_old_space_size=2560'//2.5
-const DB_URL =  process.env.DATABASE_URL || '';
+
+if (existsSync('config.env')) {
+  require('dotenv').config({ path: './config.env' });
+}
+
+process.env.NODE_OPTIONS = '--max_old_space_size=2560'; // 2.5 GB memory limit
+const DB_URL = process.env.DATABASE_URL || '';
+global.ApiUrl = 'https://rudhra-web-server.onrender.com/'
+global.WebUrl = 'https://rudhra-web-server.onrender.com/'
+
 module.exports = {
-    SESSION_ID: process.env.SESSION_ID || '', //your ssid to run bot
-    HEROKU: {
-        API_KEY: process.env.HEROKU_API_KEY,
-        APP_NAME: process.env.HEROKU_APP_NAME
+  BRANCH: "main",
+  API_TYPE: process.env.API_TYPE || 'all', // unique API type
+  AUDIO_DATA: process.env.AUDIO_DATA || "RUDHRA-BOT;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg",
+  ANTI_CALL: process.env.ANTI_CALL || 'false', // true to block calls
+  ALLWAYS_ONLINE: toBool(process.env.ALLWAYS_ONLINE || "false"),
+  AJOIN: toBool(process.env.AJOIN || 'false'),
+  BASE_URL: "https://rudhra-web-page.koyeb.app/",
+  BGM_URL: process.env.BGM_URL || "null",
+  BGMBOT: toBool(process.env.BGMBOT || "false"),
+  BOT_INFO: process.env.BOT_INFO || "ʀᴜᴅʜʀᴀ ʙᴏᴛ;ʀᴜᴅʜʀᴀɴ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra3.jpeg",
+  BOT_PRESENCE: process.env.BOT_PRESENCE || "unavailable",
+  BRAINSHOP: process.env.BRAINSHOP || '172352,vTmMboAxoXfsKEQQ&uid',
+  CHATBOT: process.env.CHATBOT || "false", // true for chatbot in PM and group
+  DISABLE_PM: toBool(process.env.DISABLE_PM || "false"),
+  DISABLE_GRP: toBool(process.env.DISABLE_GRP || "false"),
+  ERROR_MSG: toBool(process.env.ERROR_MSG || "true"),
+  ELEVENLABS: process.env.ELEVENLABS,
+  LIST_TYPE: process.env.LIST_TYPE || 'poll', // list or reaction
+  LINK_PREVIEW: process.env.LINK_PREVIEW || 'RUDHRA-BOT;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg', // You can use "false" also
+  OPEN_AI: process.env.OPEN_AI,
+  OCR_KEY: (process.env.OCR_KEY || 'K84003107488957').trim(),
+  PREFIX: process.env.PREFIX || "[.,!]", // multi-prefix using [] (e.g., [.,!])
+  PERSONAL_MESSAGE: process.env.PERSONAL_MESSAGE || "null",
+  PORT: process.env.PORT || 3000,
+  PM_BLOCK: process.env.PM_BLOCK || "false", // badword, all, spam:10 for spamming 10 block
+  REPO: "princerudh/rudhra-bot",
+  RMBG_KEY: process.env.RMBG_KEY,
+  READ: process.env.READ || "false", // true to enable command reading
+  REACT: process.env.REACT || "false", // true for command reactions with emoji
+  STATUS_VIEW: process.env.STATUS_VIEW || "false",
+  SAVE_STATUS: toBool(process.env.SAVE_STATUS || "false"),
+  SESSION_ID: process.env.SESSION_ID || '', // Your session ID to run the bot
+  STICKER_DATA: process.env.STICKER_DATA || "Ʀ ᴜ ᴅ ʜ ʀ λ;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
+  SUDO: process.env.SUDO || "null",
+  WARNCOUND: process.env.WARNCOUND || 5,
+  WORKTYPE: process.env.WORKTYPE || "private",
+  HEROKU: {
+    API_KEY: process.env.HEROKU_API_KEY,
+    APP_NAME: process.env.HEROKU_APP_NAME
+  },
+  DATABASE: DB_URL ? new Sequelize(DB_URL, {
+    dialect: 'postgres',
+    ssl: true,
+    protocol: 'postgres',
+    dialectOptions: {
+      native: true,
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
     },
-    PORT: process.env.PORT || 3000,
-    BASE_URL : "https://rudhra-web-page.koyeb.app/",
-    REPO: "princerudh/rudhra-bot",
-    BGM_URL : process.env.BGM_URL || "null",
-    ANTI_CALL : process.env.ANTI_CALL || 'false',//true,block
-    ALLWAYS_ONLINE: toBool(process.env.ALLWAYS_ONLINE || "false"),
-    PM_BLOCK : process.env.PM_BLOCK || "false",//badword, all, spam:10 for spamming 10 block
-    BGMBOT : toBool(process.env.BGMBOT || "false"),
-    STATUS_VIEW: process.env.STATUS_VIEW || "false",
-    SAVE_STATUS: toBool(process.env.SAVE_STATUS || "false"),
-    DISABLE_PM: toBool(process.env.DISABLE_PM || "false"),
-    DISABLE_GRP : toBool(process.env.DISABLE_GRP || "false"),
-    ERROR_MSG : toBool(process.env.ERROR_MSG || "true"),
-    AJOIN: toBool(process.env.AJOIN || 'false'),
-    READ : process.env.READ ||  "false",//true, command
-    CHATBOT : process.env.CHATBOT || "false",//true, pm, group
-    REACT : process.env.REACT || "false",//true, command, emoji
-    WARNCOUND : process.env.WARNCOUND || 5,
-    BOT_INFO : process.env.BOT_INFO || "ʀᴜᴅʜʀᴀ ʙᴏᴛ;ʀᴜᴅʜʀᴀɴ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra3.jpeg",
-    WORKTYPE : process.env.WORKTYPE || "private",
-    PREFIX : process.env.PREFIX || "[.,!]",//both  .  and [.] equal, for multi prefix we use [] this
-    PERSONAL_MESSAGE: process.env.PERSONAL_MESSAGE || "null",
-    BOT_PRESENCE : process.env.BOT_PRESENCE || "unavailable",
-    AUDIO_DATA : process.env.AUDIO_DATA || "RUDHRA-BOT;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg",
-    STICKER_DATA : process.env.STICKER_DATA || "Ʀ ᴜ ᴅ ʜ ʀ λ;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
-    LIST_TYPE: process.env.LIST_TYPE || 'poll',//list, reaction 
-    LINK_PREVIEW: process.env.LINK_PREVIEW || 'RUDHRA-BOT;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg',//you can use "false" alslo
-    API_TYPE: process.env.API_TYPE || 'all',//unique
-    BRAINSHOP: process.env.BRAINSHOP || '172352,vTmMboAxoXfsKEQQ&uid',
-    SUDO : process.env.SUDO || "null",
-    RMBG_KEY: process.env.RMBG_KEY,
-    OPEN_AI: process.env.OPEN_AI,
-    ELEVENLABS: process.env.ELEVENLABS,
-    OCR_KEY: (process.env.OCR_KEY || 'K84003107488957').trim(),
-    DATABASE: DB_URL ? new Sequelize(DB_URL,{dialect:'postgres',ssl:true,protocol: 'postgres', dialectOptions: {native: true,ssl:{require: true,rejectUnauthorized: false}}, logging: false}) : new Sequelize({dialect:'sqlite',storage:'./database.db',logging:false}) 
+    logging: false
+  }) : new Sequelize({
+    dialect: 'sqlite',
+    storage: './database.db',
+    logging: false
+  })
 };
