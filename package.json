@@ -4,7 +4,7 @@
   "description": "WhatsApp bot made with nodejs and baileys",
   "main": "index.js",
   "scripts": {
-    "start": "PIDUSAGE_SILENT=true pm2 start . --attach --name rudhra",
+    "start": "pm2 start . --attach --name rudhra",
     "stop": "pm2 stop rudhra"
   },
   "repository": {
