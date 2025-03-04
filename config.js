@@ -13,6 +13,7 @@ global.WebUrl = 'https://rudhra-web-server.onrender.com/'
 
 module.exports = {
   BRANCH: "main",
+  ADMIN_SUDO_ACCESS: toBool(process.env.ADMIN_SUDO_ACCESS || "false"),
   API_TYPE: process.env.API_TYPE || 'all', // unique API type
   AUDIO_DATA: process.env.AUDIO_DATA || "RUDHRA-BOT;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg",
   ANTI_CALL: process.env.ANTI_CALL || 'false', // true to block calls
