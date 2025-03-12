@@ -48,7 +48,7 @@ module.exports = {
   STICKER_DATA: process.env.STICKER_DATA || "Ʀ ᴜ ᴅ ʜ ʀ λ;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
   SUDO: process.env.SUDO || "null",
   WARNCOUND: process.env.WARNCOUND || 5,
-  WORKTYPE: process.env.WORKTYPE || "private",
+  WORKTYPE: process.env.MODE || "private",
   HEROKU: {
     API_KEY: process.env.HEROKU_API_KEY,
     APP_NAME: process.env.HEROKU_APP_NAME
