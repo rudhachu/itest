@@ -4,10 +4,13 @@
   "description": "WhatsApp bot made with nodejs and baileys",
   "main": "index.js",
   "scripts": {
+    "postinstall": "node -e \"try { require('sharp') } catch (e) { process.exit(1); }\" || yarn add --ignore-engines sharp@0.33.5",
     "start": "pm2 start . --attach --name rudhra",
-    "stop": "pm2 stop rudhra",
-    "restart": "pm2 restart rudhra"
+    "stop": "pm2 stop rudhra"
   },
+  "engines": {
+        "node": ">=18.0.0 <=22.x"
+    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/princerudh/rudhra-bot.git test"
@@ -46,6 +49,7 @@
     "pino": "^8.1.0",
     "qrcode-reader": "^1.0.4",
     "sequelize": "^6.37.3",
+    "sharp": "^0.33.5",
     "simple-git": "^3.25.0",
     "sqlite3": "^5.1.7",
     "util": "^0.12.4",
