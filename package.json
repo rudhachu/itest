@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2 start . --attach --name rudhra",
-    "stop": "pm2 stop rudhra"
+    "stop": "pm2 stop rudhra",
+    "restart": "pm2 restart rudhra"
   },
   "repository": {
     "type": "git",
