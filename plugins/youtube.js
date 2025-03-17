@@ -2,7 +2,7 @@ const { plugin, mode, isUrl } = require("../lib/");
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 
-rudhra({
+plugin({
     pattern: 'ytd ?(.*)',
     fromMe: mode,
     desc: 'Download audio or video from YouTube.',
@@ -80,7 +80,7 @@ rudhra({
     });
 });
 
-rudhra({
+plugin({
     pattern: "song ?(.*)",
     fromMe: mode,
     desc: "Search and download audio from YouTube.",
@@ -135,7 +135,7 @@ rudhra({
     }
  });
 
-rudhra({
+plugin({
   pattern: "video ?(.*)",
   fromMe: mode,
   desc: "Search and download video from YouTube.",
@@ -199,7 +199,7 @@ rudhra({
   }
 });
 
-rudhra({
+plugin({
   pattern: "yta ?(.*)",
   fromMe: mode,
   desc: "Download audio from YouTube.",
@@ -235,7 +235,7 @@ rudhra({
     }
 });
 
-rudhra({
+plugin({
   pattern: "ytv ?(.*)",
   fromMe: mode,
   desc: "Download video from YouTube.",
@@ -266,7 +266,7 @@ rudhra({
     }
 });
 
-rudhra({
+plugin({
     pattern: "play ?(.*)",
     fromMe: mode,
     desc: "Search and download YouTube video/audio.",
@@ -346,7 +346,7 @@ rudhra({
                         {
                             audio: { url: mp4 },
                             mimetype: 'audio/mpeg',
-                            fileName: `rudhra-bot.mp3`,
+                            fileName: `plugin-bot.mp3`,
                             contextInfo: {
                                 externalAdReply: {
                                     title: title,
@@ -384,7 +384,7 @@ rudhra({
     }
 });
 
-rudhra({
+plugin({
   pattern: 'yts ?(.*)', 
   fromMe: mode,
   desc: 'Search for videos on YouTube.',
@@ -419,7 +419,7 @@ rudhra({
                     mediaType: 1,
                     showAdAttribution: true,
                     renderLargerThumbnail: false,
-                    thumbnailUrl: "https://raw.githubusercontent.com/rudhraan/media/refs/heads/main/image/yts.png"
+                    thumbnailUrl: "https://raw.githubusercontent.com/pluginan/media/refs/heads/main/image/yts.png"
           }
         }
       };
