@@ -1,4 +1,4 @@
->const { plugin, mode, isUrl } = require("../lib/");
+const { plugin, mode, isUrl } = require("../lib/");
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 
