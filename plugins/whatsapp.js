@@ -2,6 +2,8 @@ const {
 	plugin,
 	mode,
 	getCompo,
+ isAdmin,
+ isBotAdmin,
 	sleep,
 	config
 } = require('../lib');
