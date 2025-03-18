@@ -69,14 +69,12 @@ plugin({
             },
             'add');
         const remains = config.WARNCOUND - count;
-        let warnmsg = `❏────[warning]────❏
-│ User :-@${message.reply_message.number}
-❏────────────────❏
-┏────── INFO ──────❏
-│ Reason :- ${reason}
-│ Count :- ${count}
-│ Remaining :- ${remains}
-┗•───────────────❏`
+        let warnmsg = `╭──〔 *WARNING* 〕───•
+│  User : @${message.reply_message.number}
+├• Reason : ${reason}
+├• Count : ${count}
+├• Remaining : ${remains}
+╰──────────────•`
         await message.send(warnmsg, {
             mentions: [message.reply_message.sender]
         })
