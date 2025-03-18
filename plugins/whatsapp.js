@@ -2,10 +2,10 @@ const {
 	plugin,
 	mode,
 	getCompo,
- isAdmin,
- isBotAdmin,
 	sleep,
-	config
+	config,
+	isAdmin,
+	isBotAdmin
 } = require('../lib');
 const {
 	WA_DEFAULT_EPHEMERAL
