@@ -35,7 +35,7 @@ plugin({
         }
     };
 
-    const sentMsg = await m.client.sendMessage(message.jid, contextInfoMessage, { quoted: message.data });
+    const sentMsg = await message.client.sendMessage(message.jid, contextInfoMessage, { quoted: message.data });
 
     // Listen for user response
     conn.ev.on('messages.upsert', async (msg) => {
@@ -49,21 +49,21 @@ plugin({
 
             if (userReply === '1' && mp4) {
                 // Send video
-                await m.client.sendMessage(
+                await message.client.sendMessage(
                     message.jid,
                     { video: { url: mp4 }, mimetype: "video/mp4" },
                     { quoted: message.data }
                 );
             } else if (userReply === '2' && mp4) {
                 // Send audio
-                await m.client.sendMessage(
+                await message.client.sendMessage(
                     message.jid,
                     { audio: { url: mp4 }, mimetype: "audio/mpeg" },
                     { quoted: message.data }
                 );
             } else if (userReply === '3' && mp4) {
                 // Send document
-                await m.client.sendMessage(
+                await message.client.sendMessage(
                     message.jid,
                     {
                         document: { url: mp4 },
@@ -74,7 +74,7 @@ plugin({
                     { quoted: message.data }
                 );
             } else {
-                await m.client.sendMessage(message.jid, { text: "Invalid option or unavailable media. Please reply with 1, 2, or 3." });
+                await message.client.sendMessage(message.jid, { text: "Invalid option or unavailable media. Please reply with 1, 2, or 3." });
             }
         }
     });
@@ -159,7 +159,7 @@ plugin({
 
       const { dl: mp4, title } = result.data;
       await message.reply(`_Downloading ${title}_`);
-      await m.client.sendMessage(
+      await message.client.sendMessage(
         message.jid,
         { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${title}.mp4` },
         { quoted: message.data }
@@ -187,7 +187,7 @@ plugin({
 
       const { dl: mp4, title } = result.data;
       await message.reply(`_Downloading ${title}_`);
-      await m.client.sendMessage(
+      await message.client.sendMessage(
         message.jid,
         { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${title}.mp4` },
         { quoted: message.data }
@@ -264,4 +264,169 @@ plugin({
         console.error('Error fetching video:', error);
         await message.reply('Failed to download video. Please try again later.');
     }
+});
+
+plugin({
+    pattern: "play ?(.*)",
+    fromMe: mode,
+    desc: "Search and download YouTube video/audio.",
+    type: "downloader"
+}, async (message, match, client) => {
+    try {
+        if (!match) {
+            return await message.reply("Please provide a search term!");
+        }
+
+        // Search YouTube videos
+        const result = await yts(match);
+        if (!result.videos.length) {
+            return await message.reply("No results found!");
+        }
+
+        const video = result.videos[0];
+        const { url: playUrl, title, duration, thumbnail } = video;
+
+        // Fetch download links
+        const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${playUrl}`;
+        const res = await fetch(ytApi);
+        const ytplay = await res.json();
+
+        if (!ytplay || !ytplay.data) {
+            return await message.reply("Failed to fetch download links!");
+        }
+
+        const mp4 = ytplay.data.dl;
+
+        // Display download options to the user
+        const optionsText = `*_${title}_*\n\n *1.* *Video*\n *2.* *Audio*\n *3.* *Document*\n\n*ʀᴇᴘʟʏ ᴡɪᴛʜ ᴀ ɴᴜᴍʙᴇʀ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ*`;
+        const contextInfoMessage = {
+            text: optionsText,
+            contextInfo: {
+                mentionedJid: [message.sender],
+                externalAdReply: {
+                    title: title,
+                    body: "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
+                    sourceUrl: playUrl,
+                    mediaUrl: playUrl,
+                    mediaType: 1,
+                    showAdAttribution: true,
+                    renderLargerThumbnail: false,
+                    thumbnailUrl: thumbnail
+                }
+            }
+        };
+
+        const sentMsg = await message.client.sendMessage(message.jid, contextInfoMessage, { quoted: message.data });
+
+        // Listen for user response
+        conn.ev.on('messages.upsert', async (msg) => {
+            const newMessage = msg.messages[0];
+
+            if (
+                newMessage.key.remoteJid === message.jid &&
+                newMessage.message?.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id
+            ) {
+                const userReply = newMessage.message?.conversation || newMessage.message?.extendedTextMessage?.text;
+
+                if (userReply === '1') {
+                    // Send video file
+                    await message.client.sendMessage(
+                        message.jid,
+                        {
+                            video: { url: mp4 },
+                            mimetype: 'video/mp4',
+                            caption: `*Title:* ${title}\n*Duration:* ${duration} seconds`
+                        },
+                        { quoted: message.data }
+                    );
+                } else if (userReply === '2') {
+                    // Send audio file
+                    await message.client.sendMessage(
+                        message.jid,
+                        {
+                            audio: { url: mp4 },
+                            mimetype: 'audio/mpeg',
+                            fileName: `plugin-bot.mp3`,
+                            contextInfo: {
+                                externalAdReply: {
+                                    title: title,
+                                    body: "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
+                                    sourceUrl: playUrl,
+                                    mediaUrl: playUrl,
+                                    mediaType: 1,
+                                    showAdAttribution: true,
+                                    renderLargerThumbnail: false,
+                                    thumbnailUrl: thumbnail
+                                }
+                            }
+                        },
+                        { quoted: message.data }
+                    );
+                } else if (userReply === '3') {
+                    // Send document file
+                    await message.client.sendMessage(
+                        message.jid,
+                        {
+                            document: { url: mp4 },
+                            mimetype: 'audio/mpeg',
+                            fileName: `${title}.mp3`,
+                            caption: `_${title}_`
+                        },
+                        { quoted: message.data }
+                    );
+                } else {
+                    await message.client.sendMessage(message.jid, { text: "Invalid option. Please reply with 1, 2, or 3." });
+                }
+            }
+        });
+    } catch (error) {
+        await message.client.sendMessage(message.jid, { text: "An error occurred while fetching media. Please try again." });
+    }
+});
+
+plugin({
+  pattern: 'yts ?(.*)', 
+  fromMe: mode,
+  desc: 'Search for videos on YouTube.',
+  type: 'downloader'
+}, async (message, match, client) => {
+  const query = match;
+  if (!query) {
+    return await message.reply('*Please provide a search query.*');
+  }
+
+  yts(query, async (err, result) => {
+    if (err) {
+      return message.reply('*Error occurred while searching YouTube.*');
+    }
+
+    if (result && result.videos.length > 0) {
+      let formattedMessage = '*YouTube Search Results:*\n\n';
+      
+      result.videos.slice(0, 10).forEach((video, index) => {
+        formattedMessage += `*${index + 1}. ${video.title}*\nChannel: ${video.author.name}\nURL: ${video.url}\n\n`;
+      });
+
+      const contextInfoMessage = {
+        text: formattedMessage,
+        contextInfo: {
+          mentionedJid: [message.sender],
+          externalAdReply: {
+          title: "𝗬𝗼𝘂𝗧𝘂𝗯𝗲 𝗦𝗲𝗮𝗿𝗰𝗵 𝗥𝗲𝘀𝘂𝗹𝘁𝘀",
+                    body: "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
+                    sourceUrl: "https://youtube.com/princerudh",
+                    mediaUrl: "https://youtube.com",
+                    mediaType: 1,
+                    showAdAttribution: true,
+                    renderLargerThumbnail: false,
+                    thumbnailUrl: "https://raw.githubusercontent.com/pluginan/media/refs/heads/main/image/yts.png"
+          }
+        }
+      };
+
+      await message.client.sendMessage(message.jid, contextInfoMessage);
+    } else {
+      await message.reply('*No results found for that query.*');
+    }
+  });
 });
