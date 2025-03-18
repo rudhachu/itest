@@ -1,6 +1,7 @@
 const {
     plugin,
     groupDB,
+    isAdmin,
     isBotAdmin,
     config
 } = require('../lib');
