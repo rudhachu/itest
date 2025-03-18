@@ -1,14 +1,12 @@
 const {
     plugin,
     getJson,
-    isUrl,
     mode
 } = require("../lib/");
 const fetch = require('node-fetch');
-const yts = require("yt-search");
 
 // URL Validation Functions
-const isIgUrl = (text) => /(https?:\/\/(?:www\.)?instagram\.com\/p\/[\w-]+\/?)/.test(text);
+const isIgUrl = (text) => /(https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel|tv)\/[\w-]+\/?)/.test(text);
 const isFbUrl = (text) => /(https?:\/\/(?:www\.)?(?:facebook\.com|fb\.com|fb\.watch)\/[^\s]+)/.test(text);
 const isYtUrl = (text) => /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+)/.test(text);
 
@@ -35,15 +33,15 @@ plugin({
 const downloadInstaMedia = async (message, url) => {
     try {
         await message.reply("_Downloading..._");
-        const { result, status } = await getJson(`https://api-25ca.onrender.com/api/instagram?url=${url}`);
-        
-        if (!status || result.length < 1) {
+        const response = await getJson(`https://api-25ca.onrender.com/api/instagram?url=${url}`);
+
+        if (!response || !response.status || !response.result || response.result.length === 0) {
             return await message.reply("*No media found!*");
         }
 
-        await message.reply("_Uploading media...⎙_", { quoted: message.data });
+        await message.reply("_Uploading media... ⎙_", { quoted: message.data });
 
-        for (const mediaUrl of result) {
+        for (const mediaUrl of response.result) {
             await message.sendFromUrl(mediaUrl);
         }
     } catch (error) {
@@ -56,21 +54,21 @@ const downloadInstaMedia = async (message, url) => {
 const downloadFacebookMedia = async (message, url) => {
     try {
         await message.reply("_Downloading..._");
-        const fbApi = `https://api.siputzx.my.id/api/d/igdl?url=${url}`;
-        const res = await fetch(fbApi);
+        const fbApi = `https://api.siputzx.my.id/api/d/fbdown?url=${encodeURIComponent(url)}`;
+        const response = await fetch(fbApi);
 
-        if (!res.ok) {
+        if (!response.ok) {
             return await message.reply("*Error fetching media. Please try again.*");
         }
 
-        const data = await res.json();
+        const data = await response.json();
         const mediaList = data.data;
 
         if (!mediaList || mediaList.length === 0) {
             return await message.reply("*No media found for the provided URL.*");
         }
 
-        await message.reply("_Uploading media...⎙_", { quoted: message.data });
+        await message.reply("_Uploading media... ⎙_", { quoted: message.data });
 
         let counter = 0;
         for (const media of mediaList) {
@@ -88,7 +86,7 @@ const downloadFacebookMedia = async (message, url) => {
 const downloadYoutubeMedia = async (message, url) => {
     try {
         await message.reply("_Downloading..._");
-        const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`;
+        const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${encodeURIComponent(url)}`;
         const response = await fetch(ytApi);
 
         if (!response.ok) {
@@ -96,8 +94,11 @@ const downloadYoutubeMedia = async (message, url) => {
         }
 
         const result = await response.json();
-        const { data } = result;
-        const { dl: mp3, title } = data;
+        if (!result || !result.data || !result.data.dl) {
+            return await message.reply("*No valid download link found.*");
+        }
+
+        const { dl: mp3, title } = result.data;
 
         await message.reply(`_Downloading ${title}_`);
 
