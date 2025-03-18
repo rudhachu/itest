@@ -1,7 +1,7 @@
 services:
   - type: web
     name: rudhra-bot
-    repo: https://github.com/princerudh/rudhra-bot.git
+    repo: https://github.com/princerudh/rudhra.git
     branch: main
     env: docker
     dockerfilePath: Dockerfile
