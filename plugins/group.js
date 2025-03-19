@@ -17,13 +17,13 @@ plugin({
 	if (!await isBotAdmin(message)) return await message.send('_bot must be admin first_', {
 		linkPreview: linkPreview()
 	})
-	if (!message.send_message.sender) return message.send('_please reply to a user_', {
+	if (!message.send_message?.sender) return message.send('_please reply to a user_', {
 		linkPreview: linkPreview()
 	})
 	await message.client.groupParticipantsUpdate(message.jid,
-		[message.send_message.sender], "promote");
-	message.send(`_@${message.send_message.sender.split('@')[0]} promoted as admin successfully_`, {
-		mentions: [message.send_message.sender],
+		[message.send_message?.sender], "promote");
+	message.send(`_@${message.send_message?.sender.split('@')[0]} promoted as admin successfully_`, {
+		mentions: [message.send_message?.sender],
 		linkPreview: linkPreview()
 	})
 });
@@ -35,7 +35,7 @@ plugin({
 	desc: "kick group member'"
 }, async (message, match) => {
 	let admin = await isAdmin(message);
-	let user = message.send_message.sender || match;
+	let user = message.send_message?.sender || match;
 	if (!user) return await message.send('_please reply to user_', {
 		linkPreview: linkPreview()
 	})
@@ -79,13 +79,13 @@ plugin({
 	if (!await isBotAdmin(message)) return await message.send('_bot must be admin first_', {
 		linkPreview: linkPreview()
 	})
-	if (!message.send_message.sender) return message.send('_please reply to a user_', {
+	if (!message.send_message?.sender) return message.send('_please reply to a user_', {
 		linkPreview: linkPreview()
 	});
 	await message.client.groupParticipantsUpdate(message.jid,
-		[message.send_message.sender], "demote");
-	return await message.send(`_@${message.send_message.sender.split('@')[0]} demoted from admin successfully_`, {
-		mentions: [message.send_message.sender],
+		[message.send_message?.sender], "demote");
+	return await message.send(`_@${message.send_message?.sender.split('@')[0]} demoted from admin successfully_`, {
+		mentions: [message.send_message?.sender],
 		linkPreview: linkPreview()
 	})
 });
@@ -298,7 +298,7 @@ plugin({
 	onlyGroup: true,
 	desc: "add member's to group"
 }, async (message, match) => {
-	match = message.send_message.sender || match;
+	match = message.send_message?.sender || match;
 	if (!match) return await message.send('_please reply to a user_');
 	match = match.replaceAll(' ', '');
 	if (!await isBotAdmin(message)) return await message.send('_bot must be admin first_', {
