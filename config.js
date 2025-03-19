@@ -31,7 +31,7 @@ module.exports = {
   ERROR_MSG: toBool(process.env.ERROR_MSG || "true"),
   ELEVENLABS: process.env.ELEVENLABS,
   LIST_TYPE: process.env.LIST_TYPE || 'poll', // list or reaction
-  LINK_PREVIEW: process.env.LINK_PREVIEW || 'RUDHRA-BOT;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg', // You can use "false" also
+  LINK_PREVIEW: process.env.LINK_PREVIEW || '𝗥𝗨𝗗𝗛𝗥𝗔 𝗕𝗢𝗧;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhraan/media/main/image/rudhra2.jpg', // You can use "false" also
   OPEN_AI: process.env.OPEN_AI,
   OCR_KEY: (process.env.OCR_KEY || 'K84003107488957').trim(),
   PREFIX: process.env.PREFIX || "[.,!]", // multi-prefix using [] (e.g., [.,!])
