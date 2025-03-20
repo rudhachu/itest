@@ -1,4 +1,4 @@
-const { plugin, mode, runtime } = require("../lib/");
+const { plugin, mode, linkPreview, runtime } = require("../lib/");
 
 plugin({
     pattern: "uptime",
@@ -7,30 +7,11 @@ plugin({
     fromMe: mode,
   },
   async (message, match) => {
-    const upt = runtime(process.uptime());
-    const uptt = `Beep boop... System status: Fully operational!\n*Current uptime: ${upt}*`;
-
-    // Ensure 'info' exists
-    const info = match || ""; 
-    const parts = info.split(';');
-
-    let fileType = 'unknown';
-    const mediaUrl = parts[2] || ''; // Ensure a valid string
-
-    if (mediaUrl.endsWith('.jpg') || mediaUrl.endsWith('.png')) {
-      fileType = 'image';
-    } else if (mediaUrl.endsWith('.mp4')) {
-      fileType = 'video';
-    }
-
-    if (fileType === 'image') {
-      await message.send({ url: mediaUrl }, { caption: uptt }, "image");
-    } else if (fileType === 'video') {
-      await message.send({ url: mediaUrl }, { caption: uptt }, "video");
-    } else {
-      await message.reply(uptt);
-    }
-  });
+    const uptimeText = `*Current uptime: ${runtime(process.uptime())}*`;
+    return await message.send(uptimeText, {
+		linkPreview: linkPreview()
+	})
+});
   
 plugin({
     pattern: 'ping ?(.*)',
