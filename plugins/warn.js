@@ -1,7 +1,7 @@
 const {
     plugin,
     groupDB,
-    isAdmin
+    isAdmin,
     isBotAdmin,
     config
 } = require('../lib');
@@ -9,7 +9,7 @@ const {
 
 plugin({
     pattern: 'warn ?(.*)',
-    desc: 'Give warning to group members',
+    desc: 'Give warning to grpup members',
     react: '😑',
     type: 'action',
     fromMe: true,
@@ -23,12 +23,12 @@ plugin({
             jid: message.jid,
             content: {}
         }, 'get');
-        if (!Object.keys(warn)[0]) return await message.reply('_Not Found!_');
+        if (!Object.keys(warn)[0]) return await message.send('_Not Found!_');
         let msg = '';
         for (const f in warn) {
-            msg += `_*User:* @${f}_\n_*Count:* ${warn[f].count}_\n_*Remaining:* ${config.WARNCOUND - warn[f].count}`;
+            msg += `_*user:* @${f}_\n_*count:* ${warn[f].count}_\n_*remaining:* ${config.WARNCOUND - warn[f].count}_\n\n`;
         }
-        return await message.send(msg, {mentions: [message.reply_message.sender], quoted: message });
+        return await message.send(msg, {mentions: [message.reply_message.sender]});
     } else if (match == 'reset') {
         if (!message.reply_message.sender) return await message.send('reply to a user');
         const {
@@ -37,23 +37,26 @@ plugin({
             jid: message.jid,
             content: {}
         }, 'get');
-        if (!Object.keys(warn)[0]) return await message.reply('_Not Found!_');
-        if (!Object.keys(warn).includes(message.reply_message.number)) return await message.reply('_User Not Found!_');
+        if (!Object.keys(warn)[0]) return await message.send('_Not Found!_');
+        if (!Object.keys(warn).includes(message.reply_message.number)) return await message.send('_User Not Found!_');
         await groupDB(['warn'], {
             jid: message.jid,
             content: {
                 id: message.reply_message.number
             }
         }, 'delete');
-        return await message.reply('_Warn reset Successfully_');
+        return await message.send('successfull');
     } else {
         const BotAdmin = await isBotAdmin(message);
         const admin = await isAdmin(message);
         if (!BotAdmin) return await message.reply('Iam not group admin');
-        if (config.ADMIN_SUDO_ACCESS != 'true' && !message.isCreator) return await message.reply('requst faild');
-        if (!admin && !message.isCreator) return await message.reply('requst faild');
-        if (!message.reply_message.sender) return await message.send('replt to a user');
-        const reason = match || 'rules violation';
+        if (config.ADMIN_ACCESS != "true" && !message.isCreator)
+        return await message.reply('Request failed.');
+      if (!admin && !message.isCreator)
+        return await message.reply('Request failed.');
+      if (!message.reply_message.sender)
+        return await message.send('Reply to a user to warn.');
+        const reason = match || 'warning';
         const {
             warn
         } = await groupDB(['warn'], {
@@ -71,14 +74,14 @@ plugin({
             },
             'add');
         const remains = config.WARNCOUND - count;
-                let warnmsg = `╭───〔 *WARNING* 〕───•
+        let warnmsg = `╭──〔 *WARNING* 〕───•
 │  User : @${message.reply_message.number}
 ├• Reason : ${reason}
 ├• Count : ${count}
 ├• Remaining : ${remains}
 ╰──────────────•`
         await message.send(warnmsg, {
-            mentions: [message.reply_message.sender], quoted: message
+            mentions: [message.reply_message.sender]
         })
         if (remains <= 0) {
             await groupDB(['warn'], {
