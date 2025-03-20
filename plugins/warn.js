@@ -1,8 +1,8 @@
 const {
     plugin,
     groupDB,
-    isBotAdmin,
     isAdmin,
+    isBotAdmin,
     config
 } = require('../lib');
 
@@ -14,66 +14,59 @@ plugin({
     fromMe: true,
     onlyGroup: true
 }, async (message, match) => {
-    if (!match && !message.reply_message) {
-        return await message.send('Usage: warn <reply to a user>\nTo reset warnings: warn reset');
-    }
+    if (!match && !message.reply_message.sender) return await message.send('Usage:\nwarn <reply to a user>\nresetwarn');
 
-    const { warn } = await groupDB(['warn'], { jid: message.jid, content: {} }, 'get') || { warn: {} };
-    
     if (match === 'get') {
+        const { warn } = await groupDB(['warn'], { jid: message.jid, content: {} }, 'get');
         if (!Object.keys(warn).length) return await message.reply('_No warnings found!_');
-        
-        let msg = '*Warning List:*\n';
+
+        let msg = 'Warnings List:\n';
         for (const user in warn) {
             msg += `\n_*User:* @${user}_\n_*Count:* ${warn[user].count}_\n_*Remaining:* ${config.WARNCOUNT - warn[user].count}_\n`;
         }
-        return await message.send(msg, { mentions: Object.keys(warn).map(u => `@${u}`) });
+        return await message.send(msg, { mentions: Object.keys(warn).map(u => `@${u}`), quoted: message });
+    } 
     
-    } else if (match === 'reset') {
-        if (!message.reply_message) return await message.send('Reply to a user to reset warnings.');
-
-        const userNumber = message.reply_message.sender.split('@')[0];
-        if (!warn[userNumber]) return await message.reply('_User has no warnings!_');
-
-        await groupDB(['warn'], { jid: message.jid, content: { id: userNumber } }, 'delete');
-        return await message.reply('_Warnings reset successfully._');
-
-    } else {
-        const BotAdmin = await isBotAdmin(message);
-        const Admin = await isAdmin(message);
+    if (match === 'reset') {
+        if (!message.reply_message.sender) return await message.send('Reply to a user to reset their warnings');
         
-        if (!BotAdmin) return await message.reply('I am not a group admin.');
-        if (config.ADMIN_ACCESS !== 'true' && !message.isCreator) return await message.reply('Request failed.');
-        if (!Admin && !message.isCreator) return await message.reply('Request failed.');
-        if (!message.reply_message) return await message.send('Reply to a user to warn.');
+        const { warn } = await groupDB(['warn'], { jid: message.jid, content: {} }, 'get');
+        if (!Object.keys(warn).includes(message.reply_message.number)) return await message.reply('_User not found!_');
 
-        const userNumber = message.reply_message.sender.split('@')[0];
-        const reason = match || 'Violation of group rules';
-        const count = warn[userNumber] ? warn[userNumber].count + 1 : 1;
+        await groupDB(['warn'], { jid: message.jid, content: { id: message.reply_message.number } }, 'delete');
+        return await message.reply('_Warnings reset successfully_');
+    }
 
-        await groupDB(['warn'], {
-            jid: message.jid,
-            content: { [userNumber]: { count } }
-        }, 'add');
+    const BotAdmin = await isBotAdmin(message);
+    const admin = await isAdmin(message);
+    
+    if (!BotAdmin) return await message.reply('I am not an admin in this group.');
+    if (config.ADMIN_ACCESS !== 'true' && !message.isCreator) return await message.reply('Request failed');
+    if (!admin && !message.isCreator) return await message.reply('Request failed');
+    if (!message.reply_message.sender) return await message.send('Reply to a user to warn them.');
 
-        const remains = config.WARNCOUNT - count;
-        let warnmsg = `╭───〔 *WARNING* 〕───•
-│  *User:* @${userNumber}
-├• *Reason:* ${reason}
-├• *Count:* ${count}
-├• *Remaining:* ${remains}
+    const reason = match || 'Violation of rules';
+    const { warn } = await groupDB(['warn'], { jid: message.jid, content: {} }, 'get');
+    
+    const count = warn[message.reply_message.number] ? warn[message.reply_message.number].count + 1 : 1;
+    const remaining = config.WARNCOUNT - count;
+
+    await groupDB(['warn'], { jid: message.jid, content: { [message.reply_message.number]: { count } } }, 'add');
+
+    let warnmsg = `╭───〔 *WARNING* 〕───•
+│  *User:* @${message.reply_message.number}
+│  *Reason:* ${reason}
+│  *Warnings:* ${count}
+│  *Remaining:* ${remaining}
 ╰──────────────•`;
 
-        await message.send(warnmsg, { mentions: [`@${userNumber}`] });
+    await message.send(warnmsg, { mentions: [`@${message.reply_message.number}`], quoted: message });
 
-        if (remains <= 0) {
-            if (BotAdmin) {
-                await message.client.groupParticipantsUpdate(message.jid, [`${userNumber}@s.whatsapp.net`], 'remove');
-                await groupDB(['warn'], { jid: message.jid, content: { id: userNumber } }, 'delete');
-                return await message.reply('Max warnings reached. User removed.');
-            } else {
-                return await message.reply('Max warnings reached, but I am not an admin to remove the user.');
-            }
+    if (remaining <= 0) {
+        await groupDB(['warn'], { jid: message.jid, content: { id: message.reply_message.number } }, 'delete');
+        if (BotAdmin) {
+            await message.client.groupParticipantsUpdate(message.from, [message.reply_message.sender], 'remove');
+            return await message.reply('Max warnings reached, user removed.');
         }
     }
 });
