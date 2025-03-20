@@ -66,7 +66,7 @@ plugin({
 }, async (message, match) => {
 	let admin = await isAdmin(message);
 	let BotAdmin = await isBotAdmin(message);
-	let user = message.send_message?.sender || match;
+	let user = message.reply_message.sender || match;
 	if (!user) return await message.send('*Please reply to a user*', {
 		linkPreview: linkPreview()
 	})
