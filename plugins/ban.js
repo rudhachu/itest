@@ -10,7 +10,7 @@ plugin({
     pattern: 'ban ?(.*)',
     desc: 'deactivate bot in specified jid',
     type: 'owner',
-    root: true
+    fromMe: true
 }, async (message, match) => {
     const {
         ban
@@ -30,7 +30,7 @@ plugin({
     pattern: 'unban ?(.*)',
     desc: 'activate bot in deactivated bot jid',
     type: 'owner',
-    root: true
+    fromMe: true
 }, async (message, match) => {
     const {
         ban
