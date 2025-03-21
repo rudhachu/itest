@@ -23,28 +23,46 @@ plugin({
 
 plugin({
     pattern: 'take',
-    desc: 'change sticker and audio authority',
+    desc: 'Change sticker and audio metadata',
     react: "⚒️",
     fromMe: mode,
     type: "utility"
 }, async (message, match) => {
-        if (!message.reply_message.sticker && !message.reply_message.audio && !message.reply_message.image && !message.reply_message.video) return message.reply('reply to a sticker/audio');
-        if (message.reply_message.sticker || message.reply_message.image || message.reply_message.video) {
-            match = match || config.STICKER_DATA;
-            let media = await message.reply_message.download();
-            return await message.sendSticker(message.jid, media, {
-                packname: match.split(/[|,;]/)[0] || match,
-                author: match.split(/[|,;]/)[1]
-            });
-        } else if (message.reply_message.audio) {
-            const opt = {
-                title: match ? match.split(/[|,;]/) ? match.split(/[|,;]/)[0] : match : config.AUDIO_DATA.split(/[|,;]/)[0] ? config.AUDIO_DATA.split(/[|,;]/)[0] : config.AUDIO_DATA,
-                body: match ? match.split(/[|,;]/)[1] : config.AUDIO_DATA.split(/[|,;]/)[1],
-                image: (match && match.split(/[|,;]/)[2]) ? match.split(/[|,;]/)[2] : config.AUDIO_DATA.split(/[|,;]/)[2]
-            }
-            const AudioMeta = await AudioMetaData(await toAudio(await message.reply_message.download()), opt);
-            return await message.send(AudioMeta,{
-                mimetype: 'audio/mpeg'
-            },'audio');
+
+    const { reply_message } = message;
+    if (!reply_message.sticker && !reply_message.audio && !reply_message.image && !reply_message.video) {
+        return message.reply('Reply to a sticker, audio, image, or video.');
+    }
+    
+    if (reply_message.sticker || reply_message.image || reply_message.video) {
+        match = match || config.STICKER_DATA;  
+        let media = await reply_message.download();
+        let [packname, author] = match.split(/[|,;]/) || [config.STICKER_DATA, ''];
+        return await message.sendSticker(message.jid, media, {
+            packname: packname || config.STICKER_DATA,
+            author: author || ''
+        });
+    }
+
+    if (reply_message.audio) {
+        const defaultAudioData = config.AUDIO_DATA?.split(/[|,;]/) || ['Unknown Title', 'Unknown Author', ''];
+        const audioMetadata = match?.split(/[|,;]/) || defaultAudioData;
+
+        const metadataOptions = {
+            title: audioMetadata[0] || defaultAudioData[0],
+            body: audioMetadata[1] || defaultAudioData[1],
+            image: audioMetadata[2] || defaultAudioData[2]
+        };
+
+        try {
+            const downloadedAudio = await reply_message.download();
+            const convertedAudio = await toAudio(downloadedAudio);
+            const audioWithMetadata = await AudioMetaData(convertedAudio, metadataOptions);
+
+            return await message.send(audioWithMetadata, { mimetype: 'audio/mpeg' }, 'audio');
+        } catch (error) {
+            console.error("Audio processing failed: ", error);
+            return message.reply('Failed to process audio.');
         }
-    })
+    }
+});
